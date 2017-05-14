@@ -1,9 +1,22 @@
 ﻿<div *ngIf="user">
   <h2>{{user.name}} details:</h2>
-  <div><label>id: </label>{{user.id}}</div>
-  <div>
-    <label>name: </label>
-    <input [(ngModel)]="user.name" placeholder="name" #details="ngModel" />
+  <div class="row">
+    <div class="col-md-2"><label class="form-control-static">Id: </label></div>
+    <div class="col-md-10"><label class="form-control-static">{{user.id}}</label></div>
+    
+    
   </div>
-  <button [class.disabled]="details.pristine" class="btn btn-success" (click)="updateUser(user)">Save</button>
+  <div class="row">
+    <div class="col-md-2">
+      <label class="form-control-static">Name: </label>
+    </div>
+    <div class="col-md-2">
+      <input class="form-control" [(ngModel)]="user.name" placeholder="name" #details="ngModel"/>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <button [class.disabled]="details.pristine" class="btn btn-success pull-right" (click)="updateUser(user)">Save</button>
+    </div>
+  </div>
 </div>

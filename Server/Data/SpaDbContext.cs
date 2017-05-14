@@ -9,9 +9,9 @@ namespace AspCoreServer.Data
             : base(options)
         {
             Database.EnsureCreated();
+
         }
 
-        //List of DB Models - Add your DB models here
         public DbSet<User> User { get; set; }
     }
 }

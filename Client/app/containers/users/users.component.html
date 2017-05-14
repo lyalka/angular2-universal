@@ -1,15 +1,21 @@
-﻿<h1>This is a RestAPI Example (hitting WebAPI in our case)</h1>
+﻿<h3>Users</h3>
 
-<blockquote>
-  Let's get some fake users from Rest:<br>
-  You can find the Web API Routes in <code>{{ "/Server/RestAPI/ ... "}}</code>
-</blockquote>
 
-<div>
-  <label>User name:</label> <input #userName />
-  <button class="btn btn-default" (click)="addUser(userName.value); userName.value=''">
-    Add
-  </button>
+<div class="row">
+  <div class="col-md-2">
+    <label class="form-control-static">User name:</label>
+  </div>
+  <div class="col-md-6">
+    <input #userName class="form-control"/>
+  </div>
+  <div class="col-md-4">
+    <button class="btn btn-default" (click)="addUser(userName.value); userName.value=''">
+      Add
+    </button>
+  </div>
+ 
+  
+  
 </div>
 
 <p *ngIf="!users"><em>Loading...</em></p>
@@ -17,12 +23,10 @@
 <ul class="users">
   <li *ngFor="let user of users"
       [class.selected]="user === selectedUser"
-      (click)="onSelect(user)"
-      [@flyInOut]>
-    <span class="badge">{{user.id}}</span> {{user.name}}
-    <button class="delete"
-            (click)="deleteUser(user); $event.stopPropagation()">
-      x
+      (click)="onSelect(user)">
+    {{user.name}}
+    <button class="btn btn-sm btn-danger pull-right" (click)="deleteUser(user); $event.stopPropagation()">
+       <i class="glyphicon glyphicon-trash btn-danger"></i>
     </button>
   </li>
 </ul>

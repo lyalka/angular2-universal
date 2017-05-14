@@ -16,8 +16,6 @@ import { HomeComponent } from './containers/home/home.component';
 import { UsersComponent } from './containers/users/users.component';
 import { UserDetailComponent } from './components/user-detail/user-detail.component';
 import { CounterComponent } from './containers/counter/counter.component';
-import { ChatComponent } from './containers/chat/chat.component';
-import { NgxBootstrapComponent } from './containers/ngx-bootstrap-demo/ngx-bootstrap.component';
 
 import { LinkService } from './shared/link.service';
 import { UserService } from './shared/user.service';
@@ -41,9 +39,7 @@ export function createTranslateLoader(http: Http, baseHref) {
         CounterComponent,
         UsersComponent,
         UserDetailComponent,
-        HomeComponent,
-        ChatComponent,
-        NgxBootstrapComponent
+        HomeComponent
     ],
     imports: [
         CommonModule,
@@ -107,36 +103,7 @@ export function createTranslateLoader(http: Http, baseHref) {
                         { rel: 'alternate', hreflang: 'es', href: 'http://es.example.com/users' }
                     ]
                 }
-            },
-            {
-                path: 'chat', component: ChatComponent,
-                // Wait until the resolve is finished before loading the Route
-                resolve: { connection: ConnectionResolver },
-                data: {
-                    title: 'SignalR chat example',
-                    meta: [{ name: 'description', content: 'This is an Chat page Description!' }],
-                    links: [
-                        { rel: 'canonical', href: 'http://blogs.example.com/chat/something' },
-                        { rel: 'alternate', hreflang: 'es', href: 'http://es.example.com/chat' }
-                    ]
-                }
-            },
-            {
-                path: 'ngx-bootstrap', component: NgxBootstrapComponent,
-                data: {
-                    title: 'Ngx-bootstrap demo!!',
-                    meta: [{ name: 'description', content: 'This is an Demo Bootstrap page Description!' }],
-                    links: [
-                        { rel: 'canonical', href: 'http://blogs.example.com/bootstrap/something' },
-                        { rel: 'alternate', hreflang: 'es', href: 'http://es.example.com/bootstrap-demo' }
-                    ]
-                }
-            },
-
-            { path: 'lazy', loadChildren: './containers/+lazy/lazy.module#LazyModule'},
-
-            // All else fails - go home!
-            { path: '**', redirectTo: 'home' }
+            }
         ])
     ],
     providers: [

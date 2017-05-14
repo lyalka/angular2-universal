@@ -2,16 +2,11 @@
 using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Antiforgery;
-
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-
-using Microsoft.AspNetCore.NodeServices;
 using AspCoreServer.Data;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -22,7 +17,12 @@ namespace AspCoreServer
 
     public static void Main(string[] args)
     {
+      //var config = new ConfigurationBuilder()
+      //  .AddCommandLine(args)
+      //  .Build();
+
       var host = new WebHostBuilder()
+          //.UseConfiguration(config)
           .UseKestrel()
           .UseContentRoot(Directory.GetCurrentDirectory())
           .UseIISIntegration()
@@ -39,6 +39,8 @@ namespace AspCoreServer
           .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
           .AddEnvironmentVariables();
       Configuration = builder.Build();
+
+
     }
 
     public IConfigurationRoot Configuration { get; }
@@ -50,7 +52,9 @@ namespace AspCoreServer
       services.AddMvc();
       services.AddNodeServices();
 
-      var connectionStringBuilder = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder { DataSource = "spa.db" };
+      var dbPath = Path.Combine(Directory.GetCurrentDirectory(), "spa.db");
+
+      var connectionStringBuilder = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder { DataSource = dbPath };
       var connectionString = connectionStringBuilder.ToString();
 
       services.AddDbContext<SpaDbContext>(options =>
@@ -69,50 +73,34 @@ namespace AspCoreServer
       loggerFactory.AddConsole(Configuration.GetSection("Logging"));
       loggerFactory.AddDebug();
 
-        app.UseStaticFiles();
+      app.UseStaticFiles();
 
-      if (env.IsDevelopment())
+
+      app.UseDeveloperExceptionPage();
+      app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
       {
-        app.UseDeveloperExceptionPage();
-        app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions {
-          HotModuleReplacement = true
-        });
+        HotModuleReplacement = env.IsDevelopment()
+      });
 
-        DbInitializer.Initialize(context);
+      DbInitializer.Initialize(context);
 
-        app.UseSwagger();
+      app.UseSwagger();
 
-        // Enable middleware to serve swagger-ui (HTML, JS, CSS etc.), specifying the Swagger JSON endpoint.
-        app.UseSwaggerUI(c =>
-        {
-          c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-          c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V2");
-        });
-
-        app.MapWhen(x => !x.Request.Path.Value.StartsWith("/swagger"), builder =>
-        {
-          builder.UseMvc(routes =>
-          {
-            routes.MapSpaFallbackRoute(
-                name: "spa-fallback",
-                defaults: new { controller = "Home", action = "Index" });
-          });
-        });
-      }
-      else
+      // Enable middleware to serve swagger-ui (HTML, JS, CSS etc.), specifying the Swagger JSON endpoint.
+      app.UseSwaggerUI(c =>
       {
-        app.UseMvc(routes =>
-        {
-          routes.MapRoute(
-              name: "default",
-              template: "{controller=Home}/{action=Index}/{id?}");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+      });
 
+      app.MapWhen(x => !x.Request.Path.Value.StartsWith("/swagger"), builder =>
+      {
+        builder.UseMvc(routes =>
+        {
           routes.MapSpaFallbackRoute(
               name: "spa-fallback",
               defaults: new { controller = "Home", action = "Index" });
         });
-        app.UseExceptionHandler("/Home/Error");
-      }
+      });
     }
   }
 }
